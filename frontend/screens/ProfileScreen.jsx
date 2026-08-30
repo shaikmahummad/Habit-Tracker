@@ -140,6 +140,15 @@ export default function ProfileScreen({ navigation }) {
           <View style={S.divider} />
           <Pressable
             style={({ pressed }) => [S.row, pressed && S.rowPressed]}
+            onPress={() => navigation.navigate('Settings')}
+          >
+            <Text style={S.rowIcon}>⚙️</Text>
+            <View style={S.rowBody}><Text style={S.rowLabel}>Settings</Text></View>
+            <Text style={S.chevron}>›</Text>
+          </Pressable>
+          <View style={S.divider} />
+          <Pressable
+            style={({ pressed }) => [S.row, pressed && S.rowPressed]}
             onPress={() => navigation.navigate('ArchivedHabits')}
           >
             <Text style={S.rowIcon}>📦</Text>

@@ -10,6 +10,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import AddHabitScreen from '../screens/AddHabitScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 import StatsScreen from '../screens/StatsScreen';
 import HabitStatsScreen from '../screens/HabitStatsScreen';
 import SocialScreen from '../screens/SocialScreen';
@@ -69,6 +70,7 @@ function ProfileStack({ colors }) {
       }}
     >
       <Stack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings', headerBackTitle: 'Back' }} />
       <Stack.Screen name="ArchivedHabits" component={ArchivedHabitsScreen} options={{ title: 'Archived Habits', headerBackTitle: 'Back' }} />
     </Stack.Navigator>
   );
