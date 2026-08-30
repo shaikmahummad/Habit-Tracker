@@ -200,6 +200,111 @@ exports.heatmap = async (req, res) => {
   }
 };
 
+exports.monthlyHistory = async (req, res) => {
+  try {
+    const monthParam = (req.query.month || '').trim(); // YYYY-MM
+    const parsed = /^(\d{4})-(\d{2})$/.exec(monthParam);
+    const now = new Date();
+    const year = parsed ? Number(parsed[1]) : now.getFullYear();
+    const monthIndex = parsed ? Number(parsed[2]) - 1 : now.getMonth();
+
+    if (Number.isNaN(year) || Number.isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
+      return res.status(400).json({ message: 'month must be in YYYY-MM format' });
+    }
+
+    const monthStart = new Date(year, monthIndex, 1);
+    const monthEnd = new Date(year, monthIndex + 1, 0);
+    const monthLabel = monthStart.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+    const dates = [];
+    for (let day = 1; day <= monthEnd.getDate(); day++) {
+      dates.push(toDateString(new Date(year, monthIndex, day)));
+    }
+
+    const habits = await Habit.find({ user: req.user.id })
+      .select('_id title icon createdAt')
+      .sort({ createdAt: 1 });
+    const habitIds = habits.map((h) => h._id);
+
+    const logs = await HabitLog.find({
+      user: req.user.id,
+      habit: { $in: habitIds },
+      date: { $in: dates },
+    }).select('habit date');
+
+    const logsByDate = new Map();
+    for (const log of logs) {
+      const date = log.date;
+      if (!logsByDate.has(date)) logsByDate.set(date, new Set());
+      logsByDate.get(date).add(log.habit.toString());
+    }
+
+    const today = todayString();
+    const calendar = [];
+    const dayDetails = {};
+
+    let completedDays = 0;
+    let partialDays = 0;
+    let missedDays = 0;
+    let totalChecks = 0;
+    let completedChecks = 0;
+
+    for (const date of dates) {
+      const dayHabits = habits.filter((h) => toDateString(new Date(h.createdAt)) <= date);
+      const completedSet = logsByDate.get(date) || new Set();
+
+      const habitsForDate = dayHabits.map((h) => ({
+        _id: h._id,
+        title: h.title,
+        icon: h.icon,
+        completed: completedSet.has(h._id.toString()),
+      }));
+
+      const total = dayHabits.length;
+      const completed = habitsForDate.filter((h) => h.completed).length;
+
+      let status = 'none';
+      if (total > 0 && date <= today) {
+        if (completed === 0) status = 'missed';
+        else if (completed === total) status = 'completed';
+        else status = 'partial';
+      }
+
+      if (status === 'completed') completedDays += 1;
+      if (status === 'partial') partialDays += 1;
+      if (status === 'missed') missedDays += 1;
+      if (total > 0 && date <= today) {
+        totalChecks += total;
+        completedChecks += completed;
+      }
+
+      const summary = { date, total, completed, status };
+      calendar.push(summary);
+      dayDetails[date] = { ...summary, habits: habitsForDate };
+    }
+
+    const completionPercentage = totalChecks > 0
+      ? Math.round((completedChecks / totalChecks) * 100)
+      : 0;
+
+    res.json({
+      month: `${year}-${pad(monthIndex + 1)}`,
+      monthLabel,
+      calendar,
+      totals: {
+        completionPercentage,
+        completedDays,
+        partialDays,
+        missedDays,
+        totalDaysTracked: completedDays + partialDays + missedDays,
+      },
+      days: dayDetails,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.habitStats = async (req, res) => {
   try {
     const habit = await Habit.findOne({ _id: req.params.id, user: req.user.id });

@@ -12,6 +12,7 @@ import AddHabitScreen from '../screens/AddHabitScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import StatsScreen from '../screens/StatsScreen';
+import CalendarHistoryScreen from '../screens/CalendarHistoryScreen';
 import HabitStatsScreen from '../screens/HabitStatsScreen';
 import SocialScreen from '../screens/SocialScreen';
 import ArchivedHabitsScreen from '../screens/ArchivedHabitsScreen';
@@ -54,6 +55,7 @@ function StatsStack({ colors }) {
       }}
     >
       <Stack.Screen name="StatsMain" component={StatsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="CalendarHistory" component={CalendarHistoryScreen} options={{ title: 'Calendar History', headerBackTitle: 'Back' }} />
       <Stack.Screen name="HabitDetail" component={HabitStatsScreen} options={{ title: 'Habit Stats', headerBackTitle: 'Back' }} />
     </Stack.Navigator>
   );

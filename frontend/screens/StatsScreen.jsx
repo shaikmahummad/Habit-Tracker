@@ -94,6 +94,14 @@ export default function StatsScreen({ navigation }) {
             ))}
           </View>
 
+          <Pressable
+            style={({ pressed }) => [S.historyBtn, pressed && { opacity: 0.85 }]}
+            onPress={() => navigation.navigate('CalendarHistory')}
+          >
+            <Text style={S.historyBtnText}>Open Monthly Calendar History</Text>
+            <Text style={S.historyBtnChevron}>›</Text>
+          </Pressable>
+
           {/* This week dots */}
           <View style={S.weekRow}>
             {last7.map((day, i) => {
@@ -214,6 +222,28 @@ const getStyles = (colors) => StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between',
     backgroundColor: 'rgba(255,255,255,0.07)',
     borderRadius: radius.lg, padding: spacing.sm + 2,
+  },
+  historyBtn: {
+    marginBottom: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.14)',
+    borderRadius: radius.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  historyBtnText: {
+    color: '#fff',
+    fontSize: font.sm,
+    fontWeight: '700',
+  },
+  historyBtnChevron: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: font.lg,
+    fontWeight: '700',
   },
   weekDay: { alignItems: 'center', flex: 1 },
   weekDot: {

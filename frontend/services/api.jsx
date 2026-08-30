@@ -34,6 +34,7 @@ export const habitsApi = {
   streak: (id) => api.get(`/habits/${id}/streak`).then((r) => r.data),
   weeklyStats: () => api.get('/habits/weekly-stats').then((r) => r.data),
   heatmap: (days = 84) => api.get(`/habits/heatmap?days=${days}`).then((r) => r.data),
+  history: (month) => api.get(`/habits/history${month ? `?month=${month}` : ''}`).then((r) => r.data),
   habitStats: (id) => api.get(`/habits/${id}/stats`).then((r) => r.data),
   archive: (id) => api.patch(`/habits/${id}/archive`).then((r) => r.data),
   getArchived: () => api.get('/habits/archived').then((r) => r.data),

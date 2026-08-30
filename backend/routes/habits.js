@@ -3,7 +3,7 @@ const auth = require('../middleware/auth');
 const {
   getHabits, createHabit, updateHabit, deleteHabit,
   toggleHabit, getHabitWithStreak, weeklyStats,
-  getArchived, archiveHabit, heatmap, habitStats,
+  getArchived, archiveHabit, heatmap, monthlyHistory, habitStats,
 } = require('../controllers/habitController');
 
 const router = express.Router();
@@ -12,6 +12,7 @@ router.use(auth);
 // Literal paths must come before /:id routes
 router.get('/weekly-stats', weeklyStats);
 router.get('/heatmap', heatmap);
+router.get('/history', monthlyHistory);
 router.get('/archived', getArchived);
 
 router.get('/', getHabits);
